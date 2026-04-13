@@ -2,7 +2,9 @@ import os
 import psycopg2
 from flask import Flask, request, redirect
 
+
 app = Flask(__name__)
+
 
 def get_db():
     return psycopg2.connect(
@@ -11,6 +13,7 @@ def get_db():
         user=os.environ["DB_USER"],
         password=os.environ["DB_PASSWORD"]
     )
+
 
 def init_db():
     conn = get_db()
@@ -26,15 +29,16 @@ def init_db():
     cur.close()
     conn.close()
 
+
 @app.route("/", methods=["GET"])
 def index():
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("SELECT content, created_at FROM messages ORDER BY created_at DESC")
+    query = "SELECT content, created_at FROM messages ORDER BY created_at DESC"
+    cur.execute(query)
     messages = cur.fetchall()
     cur.close()
     conn.close()
-
     html = "<h1>Guestbook</h1>"
     html += "<form method='POST' action='/add'>"
     html += "<input type='text' name='message' placeholder='Ton message...'>"
@@ -43,6 +47,7 @@ def index():
     for msg in messages:
         html += f"<p>{msg[0]} — <small>{msg[1]}</small></p>"
     return html
+
 
 @app.route("/add", methods=["POST"])
 def add():
@@ -55,6 +60,7 @@ def add():
         cur.close()
         conn.close()
     return redirect("/")
+
 
 if __name__ == "__main__":
     init_db()
