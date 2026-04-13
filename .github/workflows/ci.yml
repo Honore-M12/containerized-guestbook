@@ -1,0 +1,49 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+
+  job1:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloner le repo
+        uses: actions/checkout@v4
+      - name: Installer python et les dépendances néccessaires
+        run: pip install -r flask-app/requirements.txt
+      - name: lancer pytest
+        run: pytest flask-app/
+      - name: lancer flake8
+        run: flake8 flask-app/
+
+  job2:
+    name: build-and-push
+    needs: job1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloner le repo
+        uses: actions/checkout@v4
+      - name: Se connecter à DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Push l image sur DockerHub
+        uses: docker/build-push-action@v5
+        with:
+          context: ./flask-app
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/containerized-guestbook:latest
+
+
+
+
+
+
+
+
+
+
