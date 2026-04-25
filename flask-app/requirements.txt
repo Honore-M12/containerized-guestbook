@@ -2,3 +2,5 @@ Flask==3.0.0
 psycopg2-binary==2.9.9
 pytest
 flake8
+prometheus_flask_exporter
+prometheus_client
