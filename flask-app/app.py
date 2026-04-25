@@ -69,7 +69,7 @@ def add():
         cur = conn.cursor()
         cur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
         conn.commit()
-        MESSAGES_[SUBMITTED.inc](http://SUBMITTED.inc)()
+        MESSAGES_SUBMITTED.inc()
         MESSAGE_LENGTH.observe(len(message))
         cur.execute("SELECT COUNT(*) FROM messages")
         total = cur.fetchone()[0]  
@@ -79,4 +79,4 @@ def add():
     return redirect("/")
 if __name__ == "__main__":
     init_db()
-    [app.run](http://app.run)(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000)
