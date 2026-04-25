@@ -10,16 +10,16 @@ Browser → Nginx (port 80) → Flask (port 5000) → PostgreSQL (port 5432)
 
 ## Tech Stack
 
-- **Nginx** — reverse proxy, handles incoming HTTP requests
-- **Flask** — Python web application, handles business logic
-- **PostgreSQL** — relational database, persists messages
+- **Nginx** : reverse proxy, handles incoming HTTP requests
+- **Flask** : Python web application, handles business logic
+- **PostgreSQL** : relational database, persists messages
 
 ## CI/CD Pipeline
 
 Every push to `main` triggers a two-job GitHub Actions pipeline:
 
-1. **Test** — installs dependencies, runs `pytest` and `flake8`
-2. **Build & Push** — builds the Docker image and pushes it to Docker Hub
+1. **Test** : installs dependencies, runs `pytest` and `flake8`
+2. **Build & Push** : builds the Docker image and pushes it to Docker Hub
 
 The build job only runs if the test job passes.
 
@@ -31,7 +31,7 @@ cd containerized-guestbook
 docker compose up --build
 ```
 
-> **Note — if `docker compose up --build` fails with a `buildx` error:**
+> **Note: if `docker compose up --build` fails with a `buildx` error:**
 > This happens on some systems where the buildx plugin is not correctly linked.
 > Run the following commands, then retry:
 > ```bash
