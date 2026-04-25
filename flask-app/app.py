@@ -3,11 +3,17 @@ import psycopg2
 from flask import Flask, request, redirect
 from prometheus_client import Counter , Gauge, Histogram
 from prometheus_flask_exporter import PrometheusMetrics
+
+
 app = Flask(__name__)
+
+
 metrics = PrometheusMetrics(app)
 MESSAGES_SUBMITTED = Counter ('messages_submitted_total', 'Total number of submited messages since the start')
 MESSAGES_IN_DB = Gauge ('messages_in_database_count',  'Total number of message in the database')
 MESSAGE_LENGTH = Histogram ('message_length_chars', 'Distribution of message lenght')
+
+
 def get_db():
     return psycopg2.connect(
         host=os.environ["DB_HOST"],
@@ -15,6 +21,8 @@ def get_db():
         user=os.environ["DB_USER"],
         password=os.environ["DB_PASSWORD"]
     )
+
+
 def init_db():
     conn = get_db()
     cur = conn.cursor()
@@ -28,7 +36,11 @@ def init_db():
     conn.commit()
     cur.close()
     conn.close()
+
+
 @app.route("/", methods=["GET"])
+
+
 def index():
     conn = get_db()
     cur = conn.cursor()
@@ -45,7 +57,11 @@ def index():
     for msg in messages:
         html += f"<p>{msg[0]} — <small>{msg[1]}</small></p>"
     return html
+
+
 @app.route("/add", methods=["POST"])
+
+
 def add():
     message = request.form.get("message")
     if message:
