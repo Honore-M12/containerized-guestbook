@@ -1,17 +1,24 @@
 import os
 import psycopg2
 from flask import Flask, request, redirect
-from prometheus_client import Counter , Gauge, Histogram
+from prometheus_client import Counter, Gauge, Histogram
 from prometheus_flask_exporter import PrometheusMetrics
 
-
 app = Flask(__name__)
-
-
 metrics = PrometheusMetrics(app)
-MESSAGES_SUBMITTED = Counter ('messages_submitted_total', 'Total number of submited messages since the start')
-MESSAGES_IN_DB = Gauge ('messages_in_database_count',  'Total number of message in the database')
-MESSAGE_LENGTH = Histogram ('message_length_chars', 'Distribution of message lenght')
+
+MESSAGES_SUBMITTED = Counter(
+    'messages_submitted_total',
+    'Total number of submitted messages since the start'
+)
+MESSAGES_IN_DB = Gauge(
+    'messages_in_database_count',
+    'Total number of messages in the database'
+)
+MESSAGE_LENGTH = Histogram(
+    'message_length_chars',
+    'Distribution of message length'
+)
 
 
 def get_db():
@@ -39,8 +46,6 @@ def init_db():
 
 
 @app.route("/", methods=["GET"])
-
-
 def index():
     conn = get_db()
     cur = conn.cursor()
@@ -60,8 +65,6 @@ def index():
 
 
 @app.route("/add", methods=["POST"])
-
-
 def add():
     message = request.form.get("message")
     if message:
@@ -72,11 +75,13 @@ def add():
         MESSAGES_SUBMITTED.inc()
         MESSAGE_LENGTH.observe(len(message))
         cur.execute("SELECT COUNT(*) FROM messages")
-        total = cur.fetchone()[0]  
+        total = cur.fetchone()[0]
         MESSAGES_IN_DB.set(total)
         cur.close()
         conn.close()
     return redirect("/")
+
+
 if __name__ == "__main__":
     init_db()
     app.run(host="0.0.0.0", port=5000)
